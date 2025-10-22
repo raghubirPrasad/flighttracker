@@ -6,12 +6,9 @@ import {
   User, 
   Settings, 
   Bell, 
-  HelpCircle, 
   LogOut, 
   ChevronDown,
-  Shield,
-  Palette,
-  Globe
+  Palette
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -56,24 +53,6 @@ export function UserProfile() {
       label: "Preferences",
       href: "/preferences",
       description: "Customize your experience"
-    },
-    {
-      icon: Shield,
-      label: "Privacy",
-      href: "#",
-      description: "Privacy and security settings"
-    },
-    {
-      icon: Globe,
-      label: "Language",
-      href: "#",
-      description: "Change language and region"
-    },
-    {
-      icon: HelpCircle,
-      label: "Help & Support",
-      href: "#",
-      description: "Get help and contact support"
     }
   ];
 

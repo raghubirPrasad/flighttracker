@@ -42,6 +42,7 @@ export function FlightTable({ flights, title = "Flight Information" }: FlightTab
     }
     
     addMaintenanceEntry({
+      icao24: flight.icao24,
       flightNumber,
       aircraftType,
       scheduledDate: new Date().toISOString().split('T')[0],
