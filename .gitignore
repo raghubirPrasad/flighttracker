@@ -43,3 +43,9 @@ next-env.d.ts
 # Google Cloud credentials
 /credentials/
 *.json
+
+# Local environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
