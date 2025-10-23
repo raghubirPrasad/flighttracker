@@ -89,6 +89,11 @@ export async function POST(request: NextRequest) {
     console.log('  Location:', location);
     console.log('  Agent ID:', agentId);
     console.log('  Language Code:', languageCode);
+    console.log('  Environment Variables Check:');
+    console.log('    DIALOGFLOW_CX_PROJECT_ID from env:', process.env.DIALOGFLOW_CX_PROJECT_ID);
+    console.log('    DIALOGFLOW_CX_LOCATION from env:', process.env.DIALOGFLOW_CX_LOCATION);
+    console.log('    DIALOGFLOW_CX_AGENT_ID from env:', process.env.DIALOGFLOW_CX_AGENT_ID);
+    console.log('    DIALOGFLOW_LANGUAGE_CODE from env:', process.env.DIALOGFLOW_LANGUAGE_CODE);
 
     // Create session path for Dialogflow CX
     const sessionPath = dialogflowClient.projectLocationAgentSessionPath(
