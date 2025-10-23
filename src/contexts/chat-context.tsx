@@ -41,6 +41,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const sendMessageToDialogflow = async (message: string) => {
     try {
+      // First try the main Dialogflow API
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -50,6 +51,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       });
 
       const data = await response.json();
+      
+      // If the main API fails or returns an error, try the fallback
+      if (data.response && data.response.includes('trouble connecting') || data.response.includes('not configured')) {
+        console.log('Main API failed, trying fallback...');
+        return await tryFallbackAPI(message);
+      }
       
       // Check if the AI response contains flight information to add to maintenance
       if (data.response && typeof data.response === 'string') {
@@ -64,7 +71,26 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       return data.response;
     } catch (error) {
       console.error('Error sending message to Dialogflow:', error);
-      return "I'm sorry, I'm having trouble connecting to my AI service right now. Please try again later.";
+      // Try fallback API if main API fails
+      return await tryFallbackAPI(message);
+    }
+  };
+
+  const tryFallbackAPI = async (message: string) => {
+    try {
+      const response = await fetch('/api/chat-fallback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await response.json();
+      return data.response || "I'm here to help with flight maintenance planning. How can I assist you?";
+    } catch (error) {
+      console.error('Error with fallback API:', error);
+      return "I'm here to help with flight maintenance planning. How can I assist you?";
     }
   };
 

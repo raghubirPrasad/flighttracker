@@ -20,6 +20,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
+    // Check if required environment variables are set
+    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS || !process.env.DIALOGFLOW_CX_PROJECT_ID) {
+      console.error('Missing Dialogflow credentials');
+      return NextResponse.json({
+        response: "AI service is not configured. Please contact the administrator.",
+        intent: 'Configuration Error',
+        confidence: 0,
+      });
+    }
+
     // Create session path for Dialogflow CX
     const sessionPath = dialogflowClient.projectLocationAgentSessionPath(
       projectId,
@@ -64,9 +74,21 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Dialogflow API Error:', error);
     
-    // Fallback response if Dialogflow fails
+    // More specific error handling
+    let errorMessage = "I'm sorry, I'm having trouble connecting to my AI service right now. Please try again later.";
+    
+    if (error instanceof Error) {
+      if (error.message.includes('credentials')) {
+        errorMessage = "AI service credentials are not properly configured.";
+      } else if (error.message.includes('permission')) {
+        errorMessage = "AI service permission denied. Please contact support.";
+      } else if (error.message.includes('network') || error.message.includes('timeout')) {
+        errorMessage = "Network connection issue. Please check your internet connection and try again.";
+      }
+    }
+    
     return NextResponse.json({
-      response: "I'm sorry, I'm having trouble connecting to my AI service right now. Please try again later.",
+      response: errorMessage,
       intent: 'Error',
       confidence: 0,
     });
