@@ -37,3 +37,6 @@ credentials
 # Development files
 .env.example
 env.template
+
+# Build artifacts
+.next
