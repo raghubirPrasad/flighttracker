@@ -9,11 +9,11 @@ export default function NotificationsPageRoute() {
       <Sidebar />
       <div className="flex-1 flex flex-col lg:ml-64">
         {/* Notifications Header */}
-        <div className="fixed top-0 left-0 right-0 lg:left-64 z-10 bg-white border-b border-gray-200 px-6 py-8">
+        <div className="fixed top-0 left-0 right-0 lg:left-64 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-200 px-6 py-8 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-              <p className="text-gray-600 text-sm mt-1">Manage your notifications</p>
+              <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
+              <p className="text-gray-600 text-sm mt-2">Manage your notifications</p>
             </div>
             <UserProfile />
           </div>

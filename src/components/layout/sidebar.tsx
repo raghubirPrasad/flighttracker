@@ -41,25 +41,25 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-slate-900 to-slate-800 border-r border-slate-700 transform transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-2xl",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex flex-col h-full">
           {/* Extended Logo Area */}
-          <div className="bg-white px-6 py-8 border-b border-gray-200">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Plane className="h-5 w-5 text-white" />
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 border-b border-slate-700">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                <Plane className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <span className="text-2xl font-bold text-gray-900">AeroTrack AI</span>
-                <p className="text-sm text-gray-500 mt-1">BETA</p>
+                <span className="text-2xl font-bold text-white">AeroTrack AI</span>
+                <p className="text-blue-100 text-sm mt-1 font-medium">BETA</p>
               </div>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
+          <nav className="flex-1 px-4 py-6 space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -68,13 +68,16 @@ export function Sidebar() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group",
                     isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                      : "text-slate-300 hover:bg-slate-700 hover:text-white"
                   )}
                 >
-                  <Icon className="mr-3 h-5 w-5" />
+                  <Icon className={cn(
+                    "mr-3 h-5 w-5 transition-colors",
+                    isActive ? "text-white" : "text-slate-400 group-hover:text-white"
+                  )} />
                   {item.name}
                 </Link>
               );
