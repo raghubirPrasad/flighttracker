@@ -3,33 +3,41 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     // Check environment variables
-    const envVars = {
-      hasCredentialsJson: !!process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
-      hasCredentialsFile: !!process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      hasProjectId: !!process.env.DIALOGFLOW_CX_PROJECT_ID,
-      hasLocation: !!process.env.DIALOGFLOW_CX_LOCATION,
-      hasAgentId: !!process.env.DIALOGFLOW_CX_AGENT_ID,
-      hasLanguageCode: !!process.env.DIALOGFLOW_LANGUAGE_CODE,
-      nodeEnv: process.env.NODE_ENV,
-      // Don't expose actual values for security
-      projectIdLength: process.env.DIALOGFLOW_CX_PROJECT_ID?.length || 0,
-      locationValue: process.env.DIALOGFLOW_CX_LOCATION || 'Not set',
-      languageCodeValue: process.env.DIALOGFLOW_LANGUAGE_CODE || 'Not set',
-      credentialsJsonLength: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON?.length || 0,
+    const envCheck = {
+      GOOGLE_APPLICATION_CREDENTIALS_JSON: !!process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
+      DIALOGFLOW_CX_PROJECT_ID: !!process.env.DIALOGFLOW_CX_PROJECT_ID,
+      DIALOGFLOW_CX_LOCATION: !!process.env.DIALOGFLOW_CX_LOCATION,
+      DIALOGFLOW_CX_AGENT_ID: !!process.env.DIALOGFLOW_CX_AGENT_ID,
+      DIALOGFLOW_LANGUAGE_CODE: !!process.env.DIALOGFLOW_LANGUAGE_CODE,
     };
 
+    // Get actual values (without exposing sensitive data)
+    const envValues = {
+      GOOGLE_APPLICATION_CREDENTIALS_JSON: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON ? 'SET' : 'NOT SET',
+      DIALOGFLOW_CX_PROJECT_ID: process.env.DIALOGFLOW_CX_PROJECT_ID || 'NOT SET',
+      DIALOGFLOW_CX_LOCATION: process.env.DIALOGFLOW_CX_LOCATION || 'NOT SET',
+      DIALOGFLOW_CX_AGENT_ID: process.env.DIALOGFLOW_CX_AGENT_ID || 'NOT SET',
+      DIALOGFLOW_LANGUAGE_CODE: process.env.DIALOGFLOW_LANGUAGE_CODE || 'NOT SET',
+    };
+
+    // Check if all required variables are set
+    const allSet = Object.values(envCheck).every(Boolean);
+
     return NextResponse.json({
-      success: true,
-      environment: envVars,
-      message: 'Debug information retrieved'
+      status: allSet ? 'SUCCESS' : 'ERROR',
+      message: allSet ? 'All environment variables are configured' : 'Missing environment variables',
+      environment: process.env.NODE_ENV,
+      variables: envValues,
+      checks: envCheck,
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error('Debug error:', error);
-    
     return NextResponse.json({
-      success: false,
-      error: 'Failed to retrieve debug information'
-    }, { status: 500 });
+      status: 'ERROR',
+      message: 'Debug endpoint failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
   }
 }
