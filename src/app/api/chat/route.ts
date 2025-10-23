@@ -1,10 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SessionsClient } from '@google-cloud/dialogflow-cx';
 
-// Initialize Dialogflow CX client
-const dialogflowClient = new SessionsClient({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-});
+// Initialize Dialogflow CX client with environment variables
+let dialogflowClient: SessionsClient;
+
+try {
+  // Try to create client with credentials from environment variables
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+    // For Vercel deployment - credentials as JSON string
+    const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+    dialogflowClient = new SessionsClient({
+      credentials: credentials,
+    });
+  } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    // For local development - credentials file path
+    dialogflowClient = new SessionsClient({
+      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    });
+  } else {
+    // Fallback - will be handled in the API call
+    dialogflowClient = new SessionsClient();
+  }
+} catch (error) {
+  console.error('Error initializing Dialogflow client:', error);
+  // Will be handled in the API call
+}
 
 const projectId = process.env.DIALOGFLOW_CX_PROJECT_ID || 'quiet-engine-474303-i5';
 const location = process.env.DIALOGFLOW_CX_LOCATION || 'global';
@@ -21,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if required environment variables are set
-    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS || !process.env.DIALOGFLOW_CX_PROJECT_ID) {
+    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
       console.error('Missing Dialogflow credentials');
       return NextResponse.json({
         response: "AI service is not configured. Please contact the administrator.",
