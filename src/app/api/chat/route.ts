@@ -30,10 +30,20 @@ function createDialogflowClient(): SessionsClient | null {
   }
 }
 
-const projectId = process.env.DIALOGFLOW_CX_PROJECT_ID || 'quiet-engine-474303-i5';
-const location = process.env.DIALOGFLOW_CX_LOCATION || 'global';
-const agentId = process.env.DIALOGFLOW_CX_AGENT_ID || 'dc40fde4-0fde-43fc-9a7f-eaa65c0ef6ea';
-const languageCode = process.env.DIALOGFLOW_LANGUAGE_CODE || 'en-US';
+// Get environment variables - these should be set in Vercel
+const projectId = process.env.DIALOGFLOW_CX_PROJECT_ID;
+const location = process.env.DIALOGFLOW_CX_LOCATION;
+const agentId = process.env.DIALOGFLOW_CX_AGENT_ID;
+const languageCode = process.env.DIALOGFLOW_LANGUAGE_CODE;
+
+// Validate that all required environment variables are set
+if (!projectId || !location || !agentId || !languageCode) {
+  console.error('Missing required environment variables:');
+  console.error('  DIALOGFLOW_CX_PROJECT_ID:', !!projectId);
+  console.error('  DIALOGFLOW_CX_LOCATION:', !!location);
+  console.error('  DIALOGFLOW_CX_AGENT_ID:', !!agentId);
+  console.error('  DIALOGFLOW_LANGUAGE_CODE:', !!languageCode);
+}
 const sessionId = 'flighttracker-session';
 
 export async function POST(request: NextRequest) {
@@ -42,6 +52,16 @@ export async function POST(request: NextRequest) {
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
+    }
+
+    // Check if all required environment variables are set
+    if (!projectId || !location || !agentId || !languageCode) {
+      console.error('Missing required Dialogflow environment variables');
+      return NextResponse.json({
+        response: "AI service configuration is incomplete. Please contact the administrator.",
+        intent: 'Configuration Error',
+        confidence: 0,
+      });
     }
 
     // Create Dialogflow client
@@ -55,6 +75,13 @@ export async function POST(request: NextRequest) {
         confidence: 0,
       });
     }
+
+    // Debug: Log the configuration being used
+    console.log('Dialogflow Configuration:');
+    console.log('  Project ID:', projectId);
+    console.log('  Location:', location);
+    console.log('  Agent ID:', agentId);
+    console.log('  Language Code:', languageCode);
 
     // Create session path for Dialogflow CX
     const sessionPath = dialogflowClient.projectLocationAgentSessionPath(
