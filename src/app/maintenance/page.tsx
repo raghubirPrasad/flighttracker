@@ -11,7 +11,7 @@ export default function MaintenancePage() {
         <div className="fixed top-0 left-0 right-0 lg:left-64 z-10">
           <MaintenanceHeader />
         </div>
-        <div className="flex-1 pt-24 overflow-y-auto">
+        <div className="flex-1 pt-32 overflow-y-auto">
           <ScheduleMaintenance />
         </div>
       </div>
