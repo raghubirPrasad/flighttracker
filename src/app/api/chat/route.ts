@@ -1,29 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SessionsClient } from '@google-cloud/dialogflow-cx';
 
-// Initialize Dialogflow CX client with environment variables
-let dialogflowClient: SessionsClient;
-
-try {
-  // Try to create client with credentials from environment variables
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+// Function to initialize Dialogflow client
+function createDialogflowClient(): SessionsClient | null {
+  try {
     // For Vercel deployment - credentials as JSON string
-    const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
-    dialogflowClient = new SessionsClient({
-      credentials: credentials,
-    });
-  } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+      console.log('Using JSON credentials for Vercel deployment');
+      const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+      return new SessionsClient({
+        credentials: credentials,
+      });
+    }
     // For local development - credentials file path
-    dialogflowClient = new SessionsClient({
-      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-    });
-  } else {
-    // Fallback - will be handled in the API call
-    dialogflowClient = new SessionsClient();
+    else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      console.log('Using file credentials for local development');
+      return new SessionsClient({
+        keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      });
+    }
+    // Try default credentials (for Google Cloud environments)
+    else {
+      console.log('Using default credentials');
+      return new SessionsClient();
+    }
+  } catch (error) {
+    console.error('Error creating Dialogflow client:', error);
+    return null;
   }
-} catch (error) {
-  console.error('Error initializing Dialogflow client:', error);
-  // Will be handled in the API call
 }
 
 const projectId = process.env.DIALOGFLOW_CX_PROJECT_ID || 'quiet-engine-474303-i5';
@@ -40,9 +44,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    // Check if required environment variables are set
-    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-      console.error('Missing Dialogflow credentials');
+    // Create Dialogflow client
+    const dialogflowClient = createDialogflowClient();
+    
+    if (!dialogflowClient) {
+      console.error('Failed to create Dialogflow client');
       return NextResponse.json({
         response: "AI service is not configured. Please contact the administrator.",
         intent: 'Configuration Error',
