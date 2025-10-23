@@ -13,7 +13,7 @@
     "preview": "NEXT_TELEMETRY_DISABLED=1 next build && next start"
   },
   "engines": {
-    "node": "18.x",
+    "node": "22.x",
     "npm": ">=8.0.0"
   },
   "dependencies": {
