@@ -17,7 +17,7 @@ export default function FlightsPageRoute() {
             <UserProfile />
           </div>
         </div>
-        <div className="flex-1 pt-32 overflow-y-auto">
+        <div className="flex-1 pt-40 overflow-y-auto">
           <FlightsPage />
         </div>
       </div>

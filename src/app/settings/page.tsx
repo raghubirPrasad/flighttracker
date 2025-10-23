@@ -18,7 +18,7 @@ export default function SettingsPageRoute() {
             <UserProfile />
           </div>
         </div>
-        <div className="flex-1 pt-32 overflow-y-auto">
+        <div className="flex-1 pt-40 overflow-y-auto">
           <SettingsPage />
         </div>
       </div>

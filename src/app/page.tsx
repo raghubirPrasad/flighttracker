@@ -11,7 +11,7 @@ export default function Home() {
         <div className="fixed top-0 left-0 right-0 lg:left-64 z-10">
           <Header />
         </div>
-        <div className="flex-1 pt-32 overflow-y-auto">
+        <div className="flex-1 pt-40 overflow-y-auto">
           <Dashboard />
         </div>
       </div>
