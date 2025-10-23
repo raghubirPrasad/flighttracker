@@ -7,7 +7,13 @@ function createDialogflowClient(): SessionsClient | null {
     // For Vercel deployment - credentials as JSON string
     if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
       console.log('Using JSON credentials for Vercel deployment');
+      console.log('JSON length:', process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON.length);
+      console.log('JSON starts with:', process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON.substring(0, 50));
+      
       const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+      console.log('Parsed credentials project_id:', credentials.project_id);
+      console.log('Parsed credentials client_email:', credentials.client_email);
+      
       return new SessionsClient({
         credentials: credentials,
       });
@@ -26,6 +32,7 @@ function createDialogflowClient(): SessionsClient | null {
     }
   } catch (error) {
     console.error('Error creating Dialogflow client:', error);
+    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
     return null;
   }
 }
