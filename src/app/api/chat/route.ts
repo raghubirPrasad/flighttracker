@@ -51,8 +51,6 @@ if (!projectId || !location || !agentId || !languageCode) {
   console.error('  DIALOGFLOW_CX_AGENT_ID:', !!agentId);
   console.error('  DIALOGFLOW_LANGUAGE_CODE:', !!languageCode);
 }
-const sessionId = 'flighttracker-session';
-
 export async function POST(request: NextRequest) {
   try {
     const { message } = await request.json();
@@ -70,6 +68,10 @@ export async function POST(request: NextRequest) {
         confidence: 0,
       });
     }
+
+    // Generate a unique session ID for each conversation
+    const sessionId = `flighttracker-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    console.log('Generated session ID:', sessionId);
 
     // Create Dialogflow client
     const dialogflowClient = createDialogflowClient();
